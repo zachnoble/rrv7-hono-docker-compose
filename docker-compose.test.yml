@@ -1,0 +1,46 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env.test
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - test-network
+    depends_on:
+      - postgres
+      - valkey
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    networks:
+      - test-network
+    restart: unless-stopped
+
+  valkey:
+    image: valkey/valkey:8.1.2-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - valkey_test_data:/data
+    networks:
+      - test-network
+    restart: unless-stopped
+
+volumes:
+  postgres_test_data:
+  valkey_test_data:
+
+networks:
+  test-network:
+    driver: bridge

@@ -1,0 +1,106 @@
+{
+	"root": false,
+	"$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineWidth": 100,
+		"includes": [
+			"**",
+			"!**/build/**",
+			"!**/dist/**",
+			"!**/coverage/**",
+			"!**/node_modules/**",
+			"!**/.react-router/**"
+		]
+	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"complexity": {
+				"noExtraBooleanCast": "error",
+				"noUselessTypeConstraint": "error",
+				"noForEach": "off"
+			},
+			"correctness": {
+				"noConstAssign": "error",
+				"noConstantCondition": "error",
+				"noInvalidConstructorSuper": "error",
+				"noUnreachable": "error",
+				"noUnsafeFinally": "error",
+				"noUnsafeOptionalChaining": "error",
+				"noUnusedImports": {
+					"level": "error",
+					"fix": "safe"
+				},
+				"noUnusedLabels": "error",
+				"noUnusedVariables": "error",
+				"useValidForDirection": "error"
+			},
+			"style": {
+				"noNamespace": "error",
+				"useAsConstAssertion": "error",
+				"useBlockStatements": "off"
+			},
+			"suspicious": {
+				"noAsyncPromiseExecutor": "error",
+				"noArrayIndexKey": "off",
+				"noCatchAssign": "error",
+				"noClassAssign": "error",
+				"noDuplicateParameters": "error",
+				"noExplicitAny": "error",
+				"noExtraNonNullAssertion": "error",
+				"noFunctionAssign": "error",
+				"noImportAssign": "error",
+				"noPrototypeBuiltins": "error",
+				"noRedeclare": "error",
+				"noShadowRestrictedNames": "error",
+				"noUnsafeNegation": "error",
+				"useGetterReturn": "error"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off",
+				"noSvgWithoutTitle": "off"
+			},
+			"nursery": {
+				"useSortedClasses": {
+					"level": "error",
+					"options": {
+						"attributes": ["className"],
+						"functions": ["cn"]
+					},
+					"fix": "safe"
+				}
+			}
+		},
+		"includes": [
+			"**",
+			"!**/build/**",
+			"!**/dist/**",
+			"!**/node_modules/**",
+			"!**/.react-router/**"
+		]
+	},
+	"javascript": {
+		"formatter": {
+			"quoteProperties": "asNeeded",
+			"semicolons": "asNeeded",
+			"arrowParentheses": "always",
+			"bracketSpacing": true,
+			"bracketSameLine": false,
+			"quoteStyle": "single",
+			"attributePosition": "auto",
+			"jsxQuoteStyle": "single"
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"files": {
+		"includes": ["**", "!**/build", "!**/dist", "!**/node_modules", "!**/.react-router"]
+	}
+}

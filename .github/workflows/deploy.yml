@@ -1,0 +1,91 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lints:
+    uses: ./.github/workflows/lints.yml
+    permissions:
+      contents: read
+
+  tests:
+    uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
+
+  migrate-db:
+    needs: [lints, tests]
+    uses: ./.github/workflows/migrate-db.yml
+    permissions:
+      contents: read
+      id-token: write
+    secrets: inherit
+
+  deploy-backend:
+    needs: migrate-db
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push Docker image (backend)
+        run: |
+          gcloud builds submit --config=cloudbuild.yaml .
+
+      - name: Deploy to Cloud Run (backend)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: backend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend
+          region: ${{ secrets.GCP_REGION }}
+          flags: "--allow-unauthenticated"
+
+  deploy-frontend:
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push Docker image (frontend)
+        run: |
+          gcloud builds submit --config=cloudbuild.yaml .
+
+      - name: Deploy to Cloud Run (frontend)
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: frontend
+          image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/frontend
+          region: ${{ secrets.GCP_REGION }}
+          flags: "--allow-unauthenticated"
